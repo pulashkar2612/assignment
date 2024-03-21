@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Container, FormControlLabel, Pagination, Checkbox, TextField, Typography, IconButton, InputAdornment, Snackbar } from '@mui/material';
+import { Box, Container, FormControlLabel, Pagination, Checkbox, Typography } from '@mui/material';
 
 
 const Home = () => {
     const [products, setProducts] = useState([]);
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize] = useState(10);
     const [count, setCount] = useState(0);
-    //const [checkedProducts, setCheckedProducts] = useState([]);
 
     const [checkedProducts, setCheckedProducts] = useState(() => {
-        // Get checkedProducts from local storage or default to an empty array
         const storedCheckedProducts = localStorage.getItem('checkedProducts');
         return storedCheckedProducts ? JSON.parse(storedCheckedProducts) : [];
     });
@@ -43,8 +41,7 @@ const Home = () => {
             }
         }
         fetchData(page, pageSize, authToken);
-    }, [page]);
-    console.log(products);
+    }, [page, pageSize]);
 
     const handleCheckboxChange = (productId) => {
         const updatedCheckedItems = [...checkedProducts];
@@ -104,7 +101,7 @@ const Home = () => {
                         );
                     })}
                     <Pagination
-                        count={count/pageSize} // Total number of pages (change this based on your data)
+                        count={count/pageSize} 
                         page={page}
                         onChange={handleChangePage}
                         showFirstButton

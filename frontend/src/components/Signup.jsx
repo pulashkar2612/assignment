@@ -17,11 +17,11 @@ const Signup = () => {
         setSnackbarOpen(false);
     };
 
-    const handleVerificationSuccess = (id) => {
+    const handleVerificationSuccess = (id, email) => {
         setSnackbarOpen(true);
         setTimeout(() => {
-            navigate('/verifyotp', { state: { id: id } });
-        }, 1000); // Adjust the duration as needed
+            navigate('/verifyotp', { state: { id: id, email: email } });
+        }, 1000); 
     };
 
     const handleSubmit = async (values) => {
@@ -35,7 +35,7 @@ const Signup = () => {
             });
             const res = await response.json();
             if (res.success) {
-                handleVerificationSuccess(res.id);
+                handleVerificationSuccess(res.id, res.email);
             } else {
                 console.log(res);
             }
@@ -53,7 +53,7 @@ const Signup = () => {
             }}>
             <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={1000} // Adjust the duration as needed
+                autoHideDuration={1000} 
                 onClose={handleSnackbarClose}
                 message="OTP sent. Check your email"
             />
@@ -148,13 +148,13 @@ const Signup = () => {
                     <Typography
                         variant="body1"
                         component="a"
-                        href="/login" // Specify the login route
+                        href="/" 
                         sx={{
                             display: 'inline',
-                            color: 'inherit', // Inherit default typography color
+                            color: 'inherit', 
                             '&:hover': {
                                 textDecoration: 'underline',
-                                color: 'green', // Change color to green on hover
+                                color: 'green', 
                             },
                         }}
                     >

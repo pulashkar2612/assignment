@@ -8,6 +8,7 @@ import { Formik, Form, Field } from 'formik'
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackBarMessage, setSnackBarMessage] = useState(null);
     const navigate = useNavigate();
 
     const handleSnackbarClose = (event, reason) => {
@@ -19,6 +20,7 @@ const Login = () => {
 
     const handleVerificationSuccess = (res) => {
         setSnackbarOpen(true);
+        setSnackBarMessage('User Logged In !')
         setTimeout(() => {
             localStorage.setItem("token", res.token);
             localStorage.setItem("refreshToken", res.refreshToken,);
@@ -28,7 +30,7 @@ const Login = () => {
                 localStorage.setItem("checkedProducts", JSON.stringify(res.checkedProducts));
             }
             navigate('/home');
-        }, 1000); // Adjust the duration as needed
+        }, 1000); 
     };
 
     const handleSubmit = async (values) => {
@@ -45,6 +47,8 @@ const Login = () => {
                 handleVerificationSuccess(res);
             } else {
                 console.log(res);
+                setSnackbarOpen(true);
+                setSnackBarMessage(res.errorMessage);
             }
         }
         catch (err) {
@@ -60,9 +64,9 @@ const Login = () => {
             }}>
             <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={1000} // Adjust the duration as needed
+                autoHideDuration={1000} 
                 onClose={handleSnackbarClose}
-                message="User Logged In !"
+                message={snackBarMessage}
             />
             <Box
                 sx={{
@@ -142,7 +146,7 @@ const Login = () => {
                             size="large"
                             sx={{ mt: 2, mb: 1 }}
                         >
-                            CREATE ACCOUNT
+                            LOGIN
                         </Button>
                     </Form>
                 </Formik>

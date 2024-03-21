@@ -4,13 +4,14 @@ import { Box, Button, Grid, Container, TextField, Typography , Snackbar} from '@
 import { Formik, Form, Field } from 'formik'
 
 const VerifyOTP = () => {
-    const data = { v0: '', v1: '', v2: '', v3: '', v4: '', v5: '', v6: '', v7: '' };
+    const data = { v0: '', v1: '', v2: '', v3: '', v4: '', v5: '', v6: '', v7: '' }
     const location = useLocation();
     const navigate = useNavigate();
     const id = location.state.id;
-    console.log(location.state, id);
+    const email = location.state.email;
     const inputRefs = useRef([]);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackBarMessage, setSnackBarMessage] = useState(null);
 
     const focusNextInput = index => {
         if (inputRefs.current[index + 1]) {
@@ -32,7 +33,7 @@ const VerifyOTP = () => {
     };
 
     useEffect(() => {
-        inputRefs.current[0].focus(); // Focus on the first input field when component mounts
+        inputRefs.current[0].focus(); 
     }, []);
 
     const handleSnackbarClose = (event, reason) => {
@@ -44,9 +45,10 @@ const VerifyOTP = () => {
 
     const handleVerificationSuccess = (id) => {
         setSnackbarOpen(true);
+        setSnackBarMessage("User verified! Redirecting shortly to login Page!")
         setTimeout(() => {
-            navigate('/login');
-        }, 1000); // Adjust the duration as needed
+            navigate('/');
+        }, 1000); 
     };
 
     const handleSubmit = async (values) => {
@@ -69,6 +71,8 @@ const VerifyOTP = () => {
                     handleVerificationSuccess();
                 } else {
                     console.log(res);
+                    setSnackbarOpen(true);
+                    setSnackBarMessage(res.errorMessage);
                 }
             }
         }
@@ -86,9 +90,9 @@ const VerifyOTP = () => {
             }}>
             <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={1000} // Adjust the duration as needed
+                autoHideDuration={1000} 
                 onClose={handleSnackbarClose}
-                message="User verified"
+                message={snackBarMessage}
             />
             <Box
                 sx={{
@@ -103,14 +107,15 @@ const VerifyOTP = () => {
                     Verify your email
                 </Typography>
                 <Typography variant="h7" sx={{ fontWeight: 'bold', mt: 2, mb: 4 }}>
-                    Enter the 8 digit code you received on
+                    Enter the 8 digit code you received on your email id : {email}
                 </Typography>
                 <Formik
                     initialValues={data}
                     //validationSchema={validationSchema}
-                    onSubmit={(values, { setSubmitting }) => {
+                    onSubmit={(values, { setSubmitting, resetForm }) => {
                         setTimeout(() => {
                             handleSubmit(values);
+                            resetForm();
                             setSubmitting(false);
                         }, 400);
                     }}

@@ -25,7 +25,6 @@ const SignupController = expressAsyncHandler(async (req, res, next) => {
     username,
     email,
     password,
-    // role,
     id,
     otp,
   });
@@ -35,11 +34,11 @@ const SignupController = expressAsyncHandler(async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(user.password, salt);
     user.password = hashedPassword;
     await user.validate();
-    res.json({                       // we will remove this response from here, response will be sent from node mailer
+    res.json({                      
       success: true,
       message: "Enter the otp received in the email",
       id: id,
-      // otp: otp,
+      email : email,
     });
   } catch (err) {
     res.status(400);
@@ -61,7 +60,7 @@ const SignupController = expressAsyncHandler(async (req, res, next) => {
   try {
     transporter.sendMail(
       {
-        from: "pulashkar2612@gmail.com",
+        from: "kedarkantha2k23lal@gmail.com",
         to: email,
         subject: "OTP",
         html: `<h1>The OTP is - ${otp}</h1>`,
@@ -103,7 +102,6 @@ const VerifyOtpController = expressAsyncHandler(async (req, res, next) => {
     const data = await usersModel.create({
       username: userCacheData.username,
       password: userCacheData.password,
-      // role: userCacheData.role,
       email: userCacheData.email,
       createdAt: new Date().toISOString(),
     });
@@ -131,7 +129,6 @@ const LoginController = expressAsyncHandler(async (req, res, next) => {
       atob(password),
       checkUser[0].password
     );
-    console.log("cccccc", checkPassword);
     if (!checkPassword) {
       res.status(400);
       throw new Error("Incorrect password");
@@ -147,8 +144,9 @@ const LoginController = expressAsyncHandler(async (req, res, next) => {
       token: token,
       refreshToken: refreshToken,
       username: checkUser[0].username,
+      email : checkUser[0].email,
       id: checkUser[0]._id,
-      // role: checkUser[0].role,
+      checkedProducts : checkUser[0].checkedProducts
     });
   } catch (err) { }
 });
@@ -157,7 +155,7 @@ const UpdateController = expressAsyncHandler(async (req, res, next) => {
   const { userId } = req.params;
   const { checkedProducts } = req.body;
   try {
-    const user = await User.findById(userId);
+    const user = await usersModel.findById(userId);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
@@ -171,8 +169,6 @@ const UpdateController = expressAsyncHandler(async (req, res, next) => {
 });
 
 function generateOtp() {
-  // let otp = Math.random() * 1000000;
-  // return parseInt(otp);
   let otp = generate(8, {
     secret: process.env.OTP_SECRET,
     lowerCaseAlphabets: false,
